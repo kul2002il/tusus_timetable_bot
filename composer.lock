@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc46e8bd18843f7e8dba5b071cff8d81",
+    "content-hash": "7a42ea9e2ce4bde7775d71900d02f837",
     "packages": [
         {
             "name": "brick/math",
@@ -1888,6 +1888,69 @@
                 }
             ],
             "time": "2024-09-21T08:32:55+00:00"
+        },
+        {
+            "name": "luzrain/telegram-bot-api",
+            "version": "v3.10.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/luzrain/telegram-bot-api.git",
+                "reference": "8ae3546defcbe2fd562ed32e63f5d09f2c1ac3b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/luzrain/telegram-bot-api/zipball/8ae3546defcbe2fd562ed32e63f5d09f2c1ac3b0",
+                "reference": "8ae3546defcbe2fd562ed32e63f5d09f2c1ac3b0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.18",
+                "phpunit/phpunit": "^10.2",
+                "vimeo/psalm": "^5.12"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Luzrain\\TelegramBotApi\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anton Zenkov",
+                    "email": "anton.z@live.com",
+                    "homepage": "https://github.com/luzrain",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Ilya Gusev",
+                    "email": "mail@igusev.ru",
+                    "homepage": "https://php-cat.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Wrapper for Telegram Bot API",
+            "homepage": "https://github.com/luzrain/TelegramBotApi",
+            "keywords": [
+                "bot",
+                "bot api",
+                "telegram",
+                "telegram bot",
+                "telegram bot api"
+            ],
+            "support": {
+                "issues": "https://github.com/luzrain/telegram-bot-api/issues",
+                "source": "https://github.com/luzrain/telegram-bot-api/tree/v3.10.0"
+            },
+            "time": "2025-02-15T12:15:03+00:00"
         },
         {
             "name": "monolog/monolog",
