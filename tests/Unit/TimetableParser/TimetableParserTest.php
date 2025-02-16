@@ -2,25 +2,42 @@
 
 namespace Tests\Unit\TimetableParser;
 
-use App\Helpers\Parsers\TimeTableParser;
+use App\Helpers\Parsers\TimetableParser;
 use PHPUnit\Framework\TestCase;
 
 class TimetableParserTest extends TestCase
 {
-    public function test_example(): void
+    public function testSuccessParseToLessonsArray(): void
     {
-        $sourse = file_get_contents(__DIR__ . '/page.html');
+        $source = file_get_contents(__DIR__ . '/page.html');
 
-        $parsed = (new TimeTableParser())->parseStringToLessons($sourse);
+        $parsed = (new TimetableParser($source))->parseToLessons();
 
-        // file_put_contents(
-        //     __DIR__ . '/parsedLessons.json',
-        //     json_encode($parsed, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
-        // );
+//         file_put_contents(
+//             __DIR__ . '/parsedLessons.json',
+//             json_encode($parsed, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+//         );
 
         $this->assertSame(
-            $parsed,
-            json_decode(file_get_contents(__DIR__ . '/parsedLessons.json'), true)
+            file_get_contents(__DIR__ . '/parsedLessons.json'),
+            json_encode($parsed, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
+        );
+    }
+
+    public function testSuccessParseToTimetable(): void
+    {
+        $source = file_get_contents(__DIR__ . '/page.html');
+
+        $parsed = (new TimetableParser($source))->getTimetable();
+
+//         file_put_contents(
+//             __DIR__ . '/timetable.json',
+//             json_encode($parsed, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+//         );
+
+        $this->assertSame(
+            file_get_contents(__DIR__ . '/timetable.json'),
+            json_encode($parsed, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
         );
     }
 }
