@@ -2,6 +2,9 @@
 
 namespace App\Bots\Telegram\Commands;
 
+use App\Models\Group;
+use App\Models\Subscription;
+
 class Subscribe extends AbstractCommand
 {
     const COMMAND = '/subscribe';
@@ -24,7 +27,21 @@ class Subscribe extends AbstractCommand
 
     private function createSubscription(): void
     {
-        $this->response('Вы подписались.');
+        /** @var Group $group */
+        $group = Group::query()->where('number', $this->update->message->text)->first();
+
+        if (!$group) {
+            $this->response("Такой группы нет.");
+            $this->endPipeline();
+            return;
+        }
+
+        Subscription::query()->updateOrCreate(
+            ['chat_id' => $this->update->message->chat->id],
+            ['group_id' => $group->id, 'options' => '{}'],
+        );
+
+        $this->response("Вы подписались на группу $group->number, $group->faculty. Можно попробовать запросить расписание командой /today.");
         $this->endPipeline();
     }
 }

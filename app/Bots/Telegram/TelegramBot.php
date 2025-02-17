@@ -55,7 +55,11 @@ class TelegramBot
 
             foreach ($response as $update) {
                 $this->currentUpdate = $update;
-                $offset = $update->updateId + 1; // Before execution for skip failed commands.
+                $offset = $update->updateId + 1;
+
+                if (!$this->currentUpdate->message) {
+                    continue;
+                }
 
                 $this->resolvePipeline() ||
                 $this->resolveCommand() ||

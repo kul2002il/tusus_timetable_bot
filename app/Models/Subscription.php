@@ -18,6 +18,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Subscription extends Model
 {
+    protected $fillable = [
+        'group_id',
+        'chat_id',
+        'options',
+    ];
+
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
