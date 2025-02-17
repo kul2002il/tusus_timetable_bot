@@ -6,6 +6,7 @@ use App\Bots\Telegram\Commands\AbstractCommand;
 use App\Bots\Telegram\Commands\GetToday;
 use App\Bots\Telegram\Commands\NotFound;
 use App\Bots\Telegram\Commands\Ping;
+use App\Bots\Telegram\Commands\Start;
 use App\Bots\Telegram\Commands\Subscribe;
 use App\Models\Pipeline;
 use GuzzleHttp\Client;
@@ -19,6 +20,7 @@ use Luzrain\TelegramBotApi\Type\Update;
 class TelegramBot
 {
     const COMMANDS = [
+        Start::COMMAND    => Start::class,
         Ping::COMMAND     => Ping::class,
         GetToday::COMMAND => GetToday::class,
         Subscribe::COMMAND=> Subscribe::class,
