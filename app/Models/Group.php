@@ -19,6 +19,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Group extends Model
 {
+    protected $fillable = [
+        'faculty',
+        'number',
+    ];
+
     public function days(): HasMany
     {
         return $this->hasMany(Day::class);

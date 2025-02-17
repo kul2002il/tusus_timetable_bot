@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Helpers\Parsers\TimetableParser;
 use App\Models\Day;
 use App\Models\Group;
+use App\Models\Subscription;
 use Illuminate\Console\Command;
 
 class PullTimetable extends Command
@@ -15,7 +16,9 @@ class PullTimetable extends Command
 
     public function handle()
     {
-        foreach (Group::all() as $group) {
+        $ids = Subscription::query()->select('group_id')->distinct()->get();
+
+        $this->withProgressBar(Group::query()->whereIn('id', $ids)->get(), function ($group) {
             $source = file_get_contents("https://timetable.tusur.ru/faculties/{$group->faculty}/groups/{$group->number}");
 
             $timetable = (new TimetableParser($source))->getTimetable();
@@ -38,6 +41,6 @@ class PullTimetable extends Command
                 $day->touch();
                 $day->save();
             }
-        }
+        });
     }
 }
