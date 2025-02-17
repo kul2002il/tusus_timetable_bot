@@ -3,6 +3,7 @@
 namespace App\Bots\Telegram;
 
 use App\Bots\Telegram\Commands\AbstractCommand;
+use App\Bots\Telegram\Commands\GetToday;
 use App\Bots\Telegram\Commands\NotFound;
 use App\Bots\Telegram\Commands\Ping;
 use GuzzleHttp\Client;
@@ -16,6 +17,7 @@ class TelegramBot
 {
     const COMMANDS = [
         '/ping' => Ping::class,
+        '/today' => GetToday::class,
     ];
 
     private BotApi $bot;
