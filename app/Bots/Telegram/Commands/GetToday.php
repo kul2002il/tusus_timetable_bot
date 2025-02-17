@@ -2,6 +2,7 @@
 
 namespace App\Bots\Telegram\Commands;
 
+use App\Models\Day;
 use App\Models\Group;
 use App\Models\Subscription;
 use Carbon\Carbon;
@@ -18,8 +19,13 @@ class GetToday extends AbstractCommand
             ->with('group')
             ->first();
 
+        /** @var Day $day */
         $day = $subscription->group->days()->where('date', Carbon::now()->toDateString())->latest('created_at')->first();
 
-        $this->response(json_encode($day, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        $this->response(
+            view('bot.day', [
+                'lessons' => json_decode($day->body),
+            ])
+        );
     }
 }
