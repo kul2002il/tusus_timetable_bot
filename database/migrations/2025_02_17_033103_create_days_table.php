@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('group_id')->references('id')->on('groups');
             $table->date('date');
-            $table->json('body');
+            $table->text('body');
             $table->timestamps();
         });
     }

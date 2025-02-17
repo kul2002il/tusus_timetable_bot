@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('group_id')->references('id')->on('groups');
             $table->integer('chat_id')->unique();
-            $table->json('options');
+            $table->text('options');
             $table->timestamps();
         });
     }
