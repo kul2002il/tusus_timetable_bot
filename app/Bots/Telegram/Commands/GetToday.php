@@ -8,7 +8,9 @@ use Carbon\Carbon;
 
 class GetToday extends AbstractCommand
 {
-    public function run(): void
+    const COMMAND = '/today';
+
+    public function run(int $stage = 0): void
     {
         /** @var Subscription|Group $group */
         $subscription = Subscription::query()

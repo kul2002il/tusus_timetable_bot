@@ -2,6 +2,7 @@
 
 namespace App\Bots\Telegram\Commands;
 
+use App\Models\Pipeline;
 use Luzrain\TelegramBotApi\BotApi;
 use Luzrain\TelegramBotApi\Exception\TelegramApiException;
 use Luzrain\TelegramBotApi\Method\SendMessage;
@@ -16,7 +17,7 @@ abstract class AbstractCommand
     ) {
     }
 
-    abstract public function run(): void;
+    abstract public function run(int $stage = 0): void;
 
     /**
      * @throws TelegramApiException
@@ -28,5 +29,27 @@ abstract class AbstractCommand
             chatId: $this->update->message->chat->id,
             text: $text,
         ));
+    }
+
+    protected function setPipelineState(int $state): void
+    {
+        $command = $this->getCommandName();
+        if (!$command) {
+            throw new \Exception('Can\'t set pipeline for command without name.');
+        }
+        Pipeline::query()->updateOrCreate(
+            ['chat_id' => $this->update->message->chat->id],
+            ['command' => $command, 'stage' => $state],
+        );
+    }
+
+    protected function endPipeline(): void
+    {
+        Pipeline::query()->where('chat_id', $this->update->message->chat->id)->delete();
+    }
+
+    private function getCommandName(): ?string
+    {
+        return static::COMMAND ?? null;
     }
 }
