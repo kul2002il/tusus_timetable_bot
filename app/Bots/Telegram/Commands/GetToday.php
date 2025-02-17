@@ -2,7 +2,6 @@
 
 namespace App\Bots\Telegram\Commands;
 
-use App\Helpers\Parsers\TimetableParser;
 use App\Models\Group;
 use App\Models\Subscription;
 use Carbon\Carbon;
@@ -17,9 +16,7 @@ class GetToday extends AbstractCommand
             ->with('group')
             ->first();
 
-        $source = file_get_contents("https://timetable.tusur.ru/faculties/{$subscription->group->faculty}/groups/{$subscription->group->number}");
-
-        $day = (new TimetableParser($source))->getTimetable()[Carbon::now()->toDateString()] ?? 'Не найдено';
+        $day = $subscription->group->days()->where('date', Carbon::now()->toDateString())->latest('created_at')->first();
 
         $this->response(json_encode($day, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
