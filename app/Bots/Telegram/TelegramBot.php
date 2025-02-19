@@ -54,7 +54,9 @@ class TelegramBot
                     $this->resolvePipeline() ||
                     $this->resolveCommand() ||
                     $this->response('Неизвестно что с этим делать.');
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                    Log::error('Exception: ' . $e->getMessage() . $e->getTraceAsString());
+                }
             }
         }
     }
