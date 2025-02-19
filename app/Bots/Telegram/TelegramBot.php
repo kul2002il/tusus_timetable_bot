@@ -28,35 +28,32 @@ class TelegramBot
 
     private BotApi $bot;
     private ?Update $currentUpdate = null;
+    private int $offset = 0;
 
     public function __construct()
     {
         $this->bot = App::make(BotApi::class);
     }
 
-    public function run(): never
+    public function iteration(): void
     {
-        $offset = 0;
+        /** @var Update[] $response */
+        $response = $this->bot->call(new GetUpdates(offset: $this->offset, timeout: 40));
 
-        while(1) {
-            /** @var Update[] $response */
-            $response = $this->bot->call(new GetUpdates(offset: $offset, timeout: 50));
+        foreach ($response as $update) {
+            $this->currentUpdate = $update;
+            $this->offset = $update->updateId + 1;
 
-            foreach ($response as $update) {
-                $this->currentUpdate = $update;
-                $offset = $update->updateId + 1;
+            if (!$this->currentUpdate->message) {
+                continue;
+            }
 
-                if (!$this->currentUpdate->message) {
-                    continue;
-                }
-
-                try {
-                    $this->resolvePipeline() ||
-                    $this->resolveCommand() ||
-                    $this->response('Неизвестно что с этим делать.');
-                } catch (\Exception $e) {
-                    Log::error('Exception: ' . $e->getMessage() . $e->getTraceAsString());
-                }
+            try {
+                $this->resolvePipeline() ||
+                $this->resolveCommand() ||
+                $this->response('Неизвестно что с этим делать.');
+            } catch (\Exception $e) {
+                Log::error('Exception: ' . $e->getMessage() . $e->getTraceAsString());
             }
         }
     }
