@@ -3,6 +3,7 @@
 namespace App\Bots\Telegram\Commands;
 
 use App\Models\Pipeline;
+use Illuminate\Support\Facades\App;
 use Luzrain\TelegramBotApi\BotApi;
 use Luzrain\TelegramBotApi\Exception\TelegramApiException;
 use Luzrain\TelegramBotApi\Method\SendMessage;
@@ -11,10 +12,12 @@ use Psr\Http\Client\ClientExceptionInterface;
 
 abstract class AbstractCommand
 {
+    protected BotApi $bot;
+
     public function __construct(
-        protected BotApi $bot,
         protected Update $update
     ) {
+        $this->bot = App::make(BotApi::class);
     }
 
     abstract public function run(int $stage = 0): void;

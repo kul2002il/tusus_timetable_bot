@@ -9,8 +9,8 @@ use App\Bots\Telegram\Commands\Ping;
 use App\Bots\Telegram\Commands\Start;
 use App\Bots\Telegram\Commands\Subscribe;
 use App\Models\Pipeline;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\HttpFactory;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Luzrain\TelegramBotApi\BotApi;
 use Luzrain\TelegramBotApi\Method\GetUpdates;
 use Luzrain\TelegramBotApi\Method\SendMessage;
@@ -31,20 +31,7 @@ class TelegramBot
 
     public function __construct()
     {
-        $this->bot = $this->createBot();
-    }
-
-    private function createBot(): BotApi
-    {
-        $httpFactory = new HttpFactory();
-        $httpClient = new Client(['http_errors' => false]);
-
-        return new BotApi(
-            requestFactory: $httpFactory,
-            streamFactory: $httpFactory,
-            client: $httpClient,
-            token: config('telegram.api_key'),
-        );
+        $this->bot = App::make(BotApi::class);
     }
 
     public function run(): never
@@ -100,7 +87,7 @@ class TelegramBot
 
     private function createCommandByName(string $name): AbstractCommand {
         $command = self::COMMANDS[$name] ?? NotFound::class;
-        return new $command($this->bot, $this->currentUpdate);
+        return new $command($this->currentUpdate);
     }
 
     private function response(string $text): void
