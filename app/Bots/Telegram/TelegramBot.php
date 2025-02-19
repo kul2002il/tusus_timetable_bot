@@ -63,9 +63,11 @@ class TelegramBot
                     continue;
                 }
 
-                $this->resolvePipeline() ||
-                $this->resolveCommand() ||
-                $this->response('Неизвестно что с этим делать.');
+                try {
+                    $this->resolvePipeline() ||
+                    $this->resolveCommand() ||
+                    $this->response('Неизвестно что с этим делать.');
+                } catch (\Exception $e) {}
             }
         }
     }
