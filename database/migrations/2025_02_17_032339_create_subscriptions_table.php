@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('group_id')->references('id')->on('groups');
-            $table->integer('chat_id')->unique();
+            $table->bigInteger('chat_id')->unique();
             $table->text('options');
             $table->timestamps();
         });

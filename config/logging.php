@@ -1,8 +1,10 @@
 <?php
 
+use Monolog\Handler\FilterHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
+use Monolog\Handler\TelegramBotHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
 return [
@@ -54,7 +56,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['single', 'telegram'],
             'ignore_exceptions' => false,
         ],
 
@@ -71,6 +73,18 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 14,
             'replace_placeholders' => true,
+        ],
+
+        'telegram' => [
+            'driver'  => 'monolog',
+            'handler' => FilterHandler::class,
+            'level' => 'warning',
+            'with' => [
+                'handler' => new TelegramBotHandler(
+                    env('TELEGRAM_BOT_API_TOKEN'),
+                    env('TELEGRAM_LOG_CHAT_ID'),
+                ),
+            ],
         ],
 
         'slack' => [
