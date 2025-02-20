@@ -6,6 +6,7 @@ use App\Bots\Telegram\Commands\AbstractCommand;
 use App\Bots\Telegram\Commands\GetToday;
 use App\Bots\Telegram\Commands\NotFound;
 use App\Bots\Telegram\Commands\Ping;
+use App\Bots\Telegram\Commands\Restart;
 use App\Bots\Telegram\Commands\Start;
 use App\Bots\Telegram\Commands\Subscribe;
 use App\Models\Pipeline;
@@ -20,10 +21,11 @@ use Luzrain\TelegramBotApi\Type\Update;
 class TelegramBot
 {
     const COMMANDS = [
-        Start::COMMAND    => Start::class,
-        Ping::COMMAND     => Ping::class,
-        GetToday::COMMAND => GetToday::class,
-        Subscribe::COMMAND=> Subscribe::class,
+        Start::COMMAND     => Start::class,
+        GetToday::COMMAND  => GetToday::class,
+        Subscribe::COMMAND => Subscribe::class,
+        Ping::COMMAND      => Ping::class,
+        Restart::COMMAND   => Restart::class,
     ];
 
     private BotApi $bot;
@@ -38,7 +40,7 @@ class TelegramBot
     public function iteration(): void
     {
         /** @var Update[] $response */
-        $response = $this->bot->call(new GetUpdates(offset: $this->offset, timeout: 40));
+        $response = $this->bot->call(new GetUpdates(offset: $this->offset, limit: 10, timeout: 40));
 
         foreach ($response as $update) {
             $this->currentUpdate = $update;
@@ -53,7 +55,7 @@ class TelegramBot
                 $this->resolveCommand() ||
                 $this->response('Неизвестно что с этим делать.');
             } catch (\Exception $e) {
-                Log::error('Exception: ' . $e->getMessage() . $e->getTraceAsString());
+                Log::error("Exception: {$e->getMessage()}\n{$e->getTraceAsString()}");
             }
         }
     }

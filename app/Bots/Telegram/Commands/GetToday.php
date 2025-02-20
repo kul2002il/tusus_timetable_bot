@@ -19,6 +19,11 @@ class GetToday extends AbstractCommand
             ->with('group')
             ->first();
 
+        if (!$subscription) {
+            $this->response('Вы не подписаны ни на одну группу. Подпишитесь при помощи /subscribe.');
+            return;
+        }
+
         /** @var Day $day */
         $day = $subscription->group->days()->where('date', Carbon::now()->toDateString())->latest('created_at')->first();
 
