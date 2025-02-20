@@ -38,7 +38,7 @@ class TelegramBot
     public function iteration(): void
     {
         /** @var Update[] $response */
-        $response = $this->bot->call(new GetUpdates(offset: $this->offset, timeout: 40));
+        $response = $this->bot->call(new GetUpdates(offset: $this->offset, limit: 10, timeout: 40));
 
         foreach ($response as $update) {
             $this->currentUpdate = $update;
@@ -53,7 +53,7 @@ class TelegramBot
                 $this->resolveCommand() ||
                 $this->response('Неизвестно что с этим делать.');
             } catch (\Exception $e) {
-                Log::error('Exception: ' . $e->getMessage() . $e->getTraceAsString());
+                Log::error("Exception: {$e->getMessage()}\n{$e->getTraceAsString()}");
             }
         }
     }
