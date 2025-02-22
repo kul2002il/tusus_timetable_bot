@@ -20,7 +20,7 @@ use Luzrain\TelegramBotApi\Type\Update;
 
 class TelegramBot
 {
-    const COMMANDS = [
+    public const COMMANDS = [
         Start::COMMAND     => Start::class,
         GetToday::COMMAND  => GetToday::class,
         Subscribe::COMMAND => Subscribe::class,
@@ -80,14 +80,18 @@ class TelegramBot
             if ($entity instanceof MessageEntity && $entity->type === 'bot_command') {
                 $commandName = substr($this->currentUpdate->message->text, $entity->offset, $entity->length);
                 $this->createCommandByName($commandName)->run();
+
                 return true;
             }
         }
+
         return false;
     }
 
-    private function createCommandByName(string $name): AbstractCommand {
+    private function createCommandByName(string $name): AbstractCommand
+    {
         $command = self::COMMANDS[$name] ?? NotFound::class;
+
         return new $command($this->currentUpdate);
     }
 

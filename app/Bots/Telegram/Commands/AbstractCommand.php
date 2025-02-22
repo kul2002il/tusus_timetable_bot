@@ -37,9 +37,11 @@ abstract class AbstractCommand
     protected function setPipelineState(int $state): void
     {
         $command = $this->getCommandName();
+
         if (!$command) {
             throw new \Exception('Can\'t set pipeline for command without name.');
         }
+
         Pipeline::query()->updateOrCreate(
             ['chat_id' => $this->update->message->chat->id],
             ['command' => $command, 'stage' => $state],

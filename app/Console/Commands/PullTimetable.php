@@ -26,7 +26,7 @@ class PullTimetable extends Command
             foreach ($timetable as $date => $dayLessons) {
                 $day = Day::query()->firstOrNew([
                     'group_id' => $group->id,
-                    'date' => $date
+                    'date'     => $date
                 ]);
 
                 $currentVersion = json_encode($dayLessons, JSON_UNESCAPED_UNICODE);

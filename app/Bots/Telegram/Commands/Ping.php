@@ -4,7 +4,7 @@ namespace App\Bots\Telegram\Commands;
 
 class Ping extends AbstractCommand
 {
-    const COMMAND = '/ping';
+    public const COMMAND = '/ping';
 
     public function run(int $stage = 0): void
     {

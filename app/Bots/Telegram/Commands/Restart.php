@@ -7,12 +7,13 @@ use Luzrain\TelegramBotApi\Method\GetUpdates;
 
 class Restart extends AbstractCommand
 {
-    const COMMAND = '/restart';
+    public const COMMAND = '/restart';
 
     public function run(int $stage = 0): void
     {
         if ($this->update->message->chat->id !== (int) config('telegram.admin_chat_id')) {
             $this->response('Недостаточно прав.');
+
             return;
         }
 

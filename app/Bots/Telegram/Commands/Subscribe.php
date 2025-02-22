@@ -7,15 +7,15 @@ use App\Models\Subscription;
 
 class Subscribe extends AbstractCommand
 {
-    const COMMAND = '/subscribe';
+    public const COMMAND = '/subscribe';
 
-    const INPUT_GROUP_STAGE = 1;
+    public const INPUT_GROUP_STAGE = 1;
 
     public function run(int $stage = 0): void
     {
         match ($stage) {
             self::INPUT_GROUP_STAGE => $this->createSubscription(),
-            default => $this->init(),
+            default                 => $this->init(),
         };
     }
 
@@ -33,6 +33,7 @@ class Subscribe extends AbstractCommand
         if (!$group) {
             $this->response("Такой группы нет.");
             $this->endPipeline();
+
             return;
         }
 
