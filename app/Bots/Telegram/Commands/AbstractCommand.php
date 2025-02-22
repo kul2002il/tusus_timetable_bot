@@ -55,6 +55,7 @@ abstract class AbstractCommand
 
     private function getCommandName(): ?string
     {
+        /** @phpstan-ignore-next-line */
         return static::COMMAND ?? null;
     }
 }
