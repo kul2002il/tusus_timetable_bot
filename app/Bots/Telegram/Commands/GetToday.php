@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class GetToday extends AbstractCommand
 {
-    const COMMAND = '/today';
+    public const COMMAND = '/today';
 
     public function run(int $stage = 0): void
     {
@@ -21,6 +21,7 @@ class GetToday extends AbstractCommand
 
         if (!$subscription) {
             $this->response('Вы не подписаны ни на одну группу. Подпишитесь при помощи /subscribe.');
+
             return;
         }
 
@@ -29,6 +30,7 @@ class GetToday extends AbstractCommand
 
         if (!$day) {
             $this->response('В настоящее время расписание ещё не загружено (обновление каждые 15 минут), либо пар нет.');
+
             return;
         }
 

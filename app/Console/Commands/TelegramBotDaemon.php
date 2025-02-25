@@ -30,7 +30,7 @@ class TelegramBotDaemon extends Command
 
         $bot = new TelegramBot();
 
-        $id = rand(1,10000000);
+        $id = rand(1, 10000000);
 
         Cache::put('telegram_bot_daemon_id', $id, Carbon::now()->addSeconds(50));
 
