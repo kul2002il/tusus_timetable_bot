@@ -2,6 +2,8 @@
 
 namespace App\Bots\Telegram\Commands;
 
+use App\Bots\Telegram\Commands\Logic\AbstractCommand;
+
 class Start extends AbstractCommand
 {
     public const COMMAND = '/start';
