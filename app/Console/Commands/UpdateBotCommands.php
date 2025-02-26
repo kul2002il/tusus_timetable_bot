@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Bots\Telegram\Commands\Logic\Publicable;
-use App\Bots\Telegram\TelegramBot;
+use App\Bots\Telegram\UpdateRunner;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\App;
 use Luzrain\TelegramBotApi\BotApi;
@@ -23,7 +23,7 @@ class UpdateBotCommands extends Command
 
         $info = [];
 
-        foreach (TelegramBot::COMMANDS as $commandClass) {
+        foreach (UpdateRunner::COMMANDS as $commandClass) {
             $command = new $commandClass();
 
             if ($command instanceof Publicable) {
