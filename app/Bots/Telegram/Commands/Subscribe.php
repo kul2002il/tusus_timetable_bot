@@ -2,12 +2,20 @@
 
 namespace App\Bots\Telegram\Commands;
 
+use App\Bots\Telegram\Commands\Logic\AbstractCommand;
+use App\Bots\Telegram\Commands\Logic\Pipelined;
+use App\Bots\Telegram\Commands\Logic\Publicable;
+use App\Bots\Telegram\Commands\Logic\Published;
 use App\Models\Group;
 use App\Models\Subscription;
 
-class Subscribe extends AbstractCommand
+class Subscribe extends AbstractCommand implements Publicable
 {
+    use Published;
+    use Pipelined;
+
     public const COMMAND = '/subscribe';
+    public const DESCRIPTION = 'Подписаться на расписание группы.';
 
     public const INPUT_GROUP_STAGE = 1;
 

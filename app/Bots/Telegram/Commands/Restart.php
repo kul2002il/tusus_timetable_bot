@@ -2,6 +2,7 @@
 
 namespace App\Bots\Telegram\Commands;
 
+use App\Bots\Telegram\Commands\Logic\AbstractCommand;
 use Illuminate\Support\Facades\Cache;
 use Luzrain\TelegramBotApi\Method\GetUpdates;
 

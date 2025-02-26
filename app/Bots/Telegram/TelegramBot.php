@@ -2,8 +2,9 @@
 
 namespace App\Bots\Telegram;
 
-use App\Bots\Telegram\Commands\AbstractCommand;
 use App\Bots\Telegram\Commands\GetToday;
+use App\Bots\Telegram\Commands\Help;
+use App\Bots\Telegram\Commands\Logic\AbstractCommand;
 use App\Bots\Telegram\Commands\NotFound;
 use App\Bots\Telegram\Commands\Ping;
 use App\Bots\Telegram\Commands\Restart;
@@ -22,6 +23,7 @@ class TelegramBot
 {
     public const COMMANDS = [
         Start::COMMAND     => Start::class,
+        Help::COMMAND      => Help::class,
         GetToday::COMMAND  => GetToday::class,
         Subscribe::COMMAND => Subscribe::class,
         Ping::COMMAND      => Ping::class,
@@ -92,7 +94,7 @@ class TelegramBot
     {
         $command = self::COMMANDS[$name] ?? NotFound::class;
 
-        return new $command($this->currentUpdate);
+        return (new $command())->setUpdate($this->currentUpdate);
     }
 
     private function response(string $text): void

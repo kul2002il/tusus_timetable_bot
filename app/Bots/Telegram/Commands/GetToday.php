@@ -2,14 +2,21 @@
 
 namespace App\Bots\Telegram\Commands;
 
+use App\Bots\Telegram\Commands\Logic\AbstractCommand;
+use App\Bots\Telegram\Commands\Logic\Publicable;
+use App\Bots\Telegram\Commands\Logic\Published;
 use App\Models\Day;
 use App\Models\Group;
 use App\Models\Subscription;
 use Carbon\Carbon;
 
-class GetToday extends AbstractCommand
+class GetToday extends AbstractCommand implements Publicable
 {
+    use Published;
+
     public const COMMAND = '/today';
+
+    public const DESCRIPTION = 'Получить сегодняшнее расписание.';
 
     public function run(int $stage = 0): void
     {
