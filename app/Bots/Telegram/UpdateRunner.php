@@ -5,11 +5,13 @@ namespace App\Bots\Telegram;
 use App\Bots\Telegram\Commands\GetToday;
 use App\Bots\Telegram\Commands\Help;
 use App\Bots\Telegram\Commands\Logic\AbstractCommand;
+use App\Bots\Telegram\Commands\Logic\ButtonCallbackExecutable;
 use App\Bots\Telegram\Commands\NotFound;
 use App\Bots\Telegram\Commands\Ping;
 use App\Bots\Telegram\Commands\Restart;
 use App\Bots\Telegram\Commands\Start;
 use App\Bots\Telegram\Commands\Subscribe;
+use App\Bots\Telegram\Commands\Timetable;
 use App\Models\Pipeline;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -27,6 +29,7 @@ class UpdateRunner
         Subscribe::COMMAND => Subscribe::class,
         Ping::COMMAND      => Ping::class,
         Restart::COMMAND   => Restart::class,
+        Timetable::COMMAND => Timetable::class,
     ];
 
     protected ?Update $update;
@@ -38,6 +41,7 @@ class UpdateRunner
         try {
             $this->resolvePipeline() ||
             $this->resolveCommand() ||
+            $this->resolveButton() ||
             $this->response('Неизвестно что с этим делать.');
         } catch (\Exception $e) {
             Log::error("Exception: {$e->getMessage()}\n{$e->getTraceAsString()}");
@@ -47,7 +51,7 @@ class UpdateRunner
     private function resolvePipeline(): bool
     {
         /** @var Pipeline|null $pipeline */
-        $pipeline = Pipeline::query()->where('chat_id', $this->update->message->chat->id)->first();
+        $pipeline = Pipeline::query()->where('chat_id', $this->getChatId())->first();
 
         if (!$pipeline) {
             return false;
@@ -72,6 +76,27 @@ class UpdateRunner
         return false;
     }
 
+    private function resolveButton(): bool
+    {
+        $query = $this->update->callbackQuery->data ?? '';
+
+        if (!$query) {
+            return false;
+        }
+
+        $query = explode(' ', $query, 2);
+
+        $command = $this->createCommandByName($query[0]);
+
+        if (!($command instanceof ButtonCallbackExecutable)) {
+            return false;
+        }
+
+        $command->runButton($query[1]);
+
+        return true;
+    }
+
     private function createCommandByName(string $name): AbstractCommand
     {
         $command = self::COMMANDS[$name] ?? NotFound::class;
@@ -82,8 +107,13 @@ class UpdateRunner
     private function response(string $text): void
     {
         App::make(BotApi::class)->call(new SendMessage(
-            chatId: $this->update->message->chat->id,
+            chatId: $this->getChatId(),
             text: $text,
         ));
+    }
+
+    private function getChatId(): int
+    {
+        return ($this->update->message ?? $this->update->callbackQuery->message)->chat->id;
     }
 }

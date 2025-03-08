@@ -26,7 +26,7 @@ class TelegramBot
         foreach ($response as $update) {
             $this->offset = $update->updateId + 1;
 
-            if (!$update->message) {
+            if (!$update->message && !$update->callbackQuery) {
                 continue;
             }
 

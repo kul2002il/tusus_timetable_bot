@@ -36,8 +36,13 @@ abstract class AbstractCommand
     protected function response(string $text): void
     {
         $this->bot->call(new SendMessage(
-            chatId: $this->update->message->chat->id,
+            chatId: $this->getChatId(),
             text: $text,
         ));
+    }
+
+    protected function getChatId(): int
+    {
+        return ($this->update->message ?? $this->update->callbackQuery->message)->chat->id;
     }
 }

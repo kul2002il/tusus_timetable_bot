@@ -32,8 +32,10 @@ class GetToday extends AbstractCommand implements Publicable
             return;
         }
 
+        $currentDate = Carbon::now()->toDateString();
+
         /** @var Day $day */
-        $day = $subscription->group->days()->where('date', Carbon::now()->toDateString())->latest('created_at')->first();
+        $day = $subscription->group->days()->where('date', $currentDate)->latest('created_at')->first();
 
         if (!$day) {
             $this->response('В настоящее время расписание ещё не загружено (обновление каждые 15 минут), либо пар нет.');
@@ -43,6 +45,7 @@ class GetToday extends AbstractCommand implements Publicable
 
         $this->response(
             view('bot.day', [
+                'date'    => $currentDate,
                 'lessons' => json_decode($day->body),
             ])
         );
