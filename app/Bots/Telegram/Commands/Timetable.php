@@ -10,7 +10,6 @@ use App\Models\Day;
 use App\Models\Group;
 use App\Models\Subscription;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use Luzrain\TelegramBotApi\Method\EditMessageText;
 use Luzrain\TelegramBotApi\Method\SendMessage;
 use Luzrain\TelegramBotApi\Type\InlineKeyboardMarkup;
