@@ -10,6 +10,7 @@ use App\Models\Day;
 use App\Models\Group;
 use App\Models\Subscription;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Luzrain\TelegramBotApi\Method\EditMessageText;
 use Luzrain\TelegramBotApi\Method\SendMessage;
 use Luzrain\TelegramBotApi\Type\InlineKeyboardMarkup;
@@ -58,21 +59,24 @@ class Timetable extends Logic\AbstractCommand implements Publicable, ButtonCallb
             return;
         }
 
+        $newMessage = trim(view('bot.day', [
+            'date'    => $date,
+            'lessons' => json_decode($day->body),
+        ]));
+
+        if ($newMessage === $this->update->callbackQuery?->message?->text) {
+            $newMessage .= "\n\nИ незачем тыкать два раза одну дату.";
+        }
+
         if ($this->update->message) {
             $this->bot->call(new SendMessage(
                 chatId: $this->update->message->chat->id,
-                text: view('bot.day', [
-                    'date'    => $date,
-                    'lessons' => json_decode($day->body),
-                ]),
+                text: $newMessage,
                 replyMarkup: $this->createKeyboardMarkup(),
             ));
         } else {
             $this->bot->call(new EditMessageText(
-                text: view('bot.day', [
-                    'date'    => $date,
-                    'lessons' => json_decode($day->body),
-                ]),
+                text: $newMessage,
                 chatId: $this->getChatId(),
                 messageId: $this->update->callbackQuery->message->messageId,
                 replyMarkup: $this->createKeyboardMarkup(),
