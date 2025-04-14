@@ -10,6 +10,7 @@ use App\Models\Day;
 use App\Models\Group;
 use App\Models\Subscription;
 use Carbon\Carbon;
+use Luzrain\TelegramBotApi\Method\EditMessageText;
 use Luzrain\TelegramBotApi\Method\SendMessage;
 use Luzrain\TelegramBotApi\Type\InlineKeyboardMarkup;
 
@@ -26,7 +27,7 @@ class Timetable extends Logic\AbstractCommand implements Publicable, ButtonCallb
 
     public function run(int $stage = 0): void
     {
-        $this->sendButtons();
+        $this->sendTimetable(Carbon::now()->toDateString());
     }
 
     public function runButton(string $callback): void
@@ -57,21 +58,32 @@ class Timetable extends Logic\AbstractCommand implements Publicable, ButtonCallb
             return;
         }
 
-        $this->response(
-            view('bot.day', [
-                'date'    => $date,
-                'lessons' => json_decode($day->body),
-            ])
-        );
+        if ($this->update->message) {
+            $this->bot->call(new SendMessage(
+                chatId: $this->update->message->chat->id,
+                text: view('bot.day', [
+                    'date'    => $date,
+                    'lessons' => json_decode($day->body),
+                ]),
+                replyMarkup: $this->createKeyboardMarkup(),
+            ));
+        } else {
+            $this->bot->call(new EditMessageText(
+                text: view('bot.day', [
+                    'date'    => $date,
+                    'lessons' => json_decode($day->body),
+                ]),
+                chatId: $this->getChatId(),
+                messageId: $this->update->callbackQuery->message->messageId,
+                replyMarkup: $this->createKeyboardMarkup(),
+            ));
+        }
     }
 
-    private function sendButtons(): void
+    private function createKeyboardMarkup(): InlineKeyboardMarkup
     {
         $dayOfCurrentWeek = Carbon::now()->startOfWeek();
         $dayOfPreviousWeek = $dayOfCurrentWeek->clone()->subWeek();
-
-        $startDate = $dayOfPreviousWeek->toDateString();
-        $endDate = $dayOfCurrentWeek->clone()->addDays(6)->toDateString();
 
         $dayNames = [
             'Пн',
@@ -100,10 +112,6 @@ class Timetable extends Logic\AbstractCommand implements Publicable, ButtonCallb
             $dayOfCurrentWeek->addDay();
         }
 
-        $this->bot->call(new SendMessage(
-            chatId: $this->update->message->chat->id,
-            text: "Расписание с $startDate до $endDate",
-            replyMarkup: new InlineKeyboardMarkup($buttons)
-        ));
+        return new InlineKeyboardMarkup($buttons);
     }
 }
