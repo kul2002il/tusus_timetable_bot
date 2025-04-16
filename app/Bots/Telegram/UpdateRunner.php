@@ -12,6 +12,7 @@ use App\Bots\Telegram\Commands\Restart;
 use App\Bots\Telegram\Commands\Start;
 use App\Bots\Telegram\Commands\Subscribe;
 use App\Bots\Telegram\Commands\Timetable;
+use App\Exceptions\Presentable;
 use App\Models\Pipeline;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -43,6 +44,8 @@ class UpdateRunner
             $this->resolveCommand() ||
             $this->resolveButton() ||
             $this->response('Неизвестно что с этим делать.');
+        } catch (Presentable $exception) {
+            $this->response($exception->getMessage());
         } catch (\Exception $e) {
             Log::error("Exception: {$e->getMessage()}\n{$e->getTraceAsString()}");
         }
