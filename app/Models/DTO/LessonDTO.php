@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers\Parsers;
+namespace App\Models\DTO;
 
 use Carbon\Carbon;
 

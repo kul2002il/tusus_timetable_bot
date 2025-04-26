@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Helpers\Parsers;
+namespace App\Scrappers\Timetable\TUSUR;
 
+use App\Models\DTO\LessonDTO;
 use Carbon\Carbon;
 use PHPHtmlParser\Dom;
 

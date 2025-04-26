@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\Parsers\TimetableParser;
 use App\Models\Day;
 use App\Models\Group;
 use App\Models\Subscription;
+use App\Scrappers\Timetable\TUSUR\TimetableParser;
 use Illuminate\Console\Command;
 
 class PullTimetable extends Command

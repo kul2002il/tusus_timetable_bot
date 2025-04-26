@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\TimetableParser;
 
-use App\Helpers\Parsers\TimetableParser;
+use App\Scrappers\Timetable\TUSUR\TimetableParser;
 use PHPUnit\Framework\TestCase;
 
 class TimetableParserTest extends TestCase
