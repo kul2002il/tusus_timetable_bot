@@ -34,7 +34,7 @@ class TimetableParser implements ScheduleSourceInterface
             $times = explode('-', trim($element->find('.modal-body p')[2]->text()), 2);
 
             $lessons[] = new LessonDTO(
-                subject: trim($element->find('.discipline')[1]->text()),
+                subject: trim($element->find('.discipline')[1]->text(true)),
                 type: trim($element->find('.kind')[0]->text(true)),
                 auditorium: trim($element->find('.auditoriums')[0]->text(true)),
                 teacher: collect($element->find('.modal-info-teachers a'))->map(fn ($e) => $e->text(true))->implode(', '),
