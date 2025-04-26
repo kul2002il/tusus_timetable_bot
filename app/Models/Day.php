@@ -33,7 +33,7 @@ class Day extends Model
     protected function body(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => DayScheduleDTO::fromArray(json_decode($value, true)),
+            get: fn (?string $value) => $value ? DayScheduleDTO::fromArray(json_decode($value, true)) : null,
             set: fn (DayScheduleDTO $value) => json_encode($value, JSON_UNESCAPED_UNICODE),
         );
     }

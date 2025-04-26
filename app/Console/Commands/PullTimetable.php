@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\Subscription;
 use App\Scrappers\Timetable\TUSUR\TimetableParser;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 
 class PullTimetable extends Command
 {
@@ -18,27 +19,40 @@ class PullTimetable extends Command
     {
         $ids = Subscription::query()->select('group_id')->distinct()->get();
 
-        $this->withProgressBar(Group::query()->whereIn('id', $ids)->get(), function ($group) {
+        $this->withProgressBar(Group::query()->whereIn('id', $ids)->get(), function (Group $group) {
             $source = file_get_contents("https://timetable.tusur.ru/faculties/{$group->faculty}/groups/{$group->number}");
 
-            $timetable = (new TimetableParser($source))->getSchedule();
+            $timetableParser = new TimetableParser($source);
 
-            foreach ($timetable as $scheduleDay) {
-                $date = $scheduleDay->date->toDateString();
-                /** @var Day $day */
-                $day = Day::query()->firstOrNew([
-                    'group_id' => $group->id,
-                    'date'     => $date
-                ]);
+            $this->saveTimetable($timetableParser->getSchedule(), $group);
 
-                if ($day->body->toArray() != $scheduleDay->toArray()) {
-                    dump("$date was changed!");
-                    $day->body = $scheduleDay;
-                }
+            sleep(5);
 
-                $day->touch();
-                $day->save();
-            }
+            $this->saveTimetable((
+                new TimetableParser(file_get_contents($timetableParser->getNextWeekLink()))
+            )->getSchedule(), $group);
+
+            sleep(5);
         });
+    }
+
+    private function saveTimetable(Collection $timetable, Group $group): void
+    {
+        foreach ($timetable as $scheduleDay) {
+            $date = $scheduleDay->date->toDateString();
+            /** @var Day $day */
+            $day = Day::query()->firstOrNew([
+                'group_id' => $group->id,
+                'date'     => $date
+            ]);
+
+            if ($day->body?->toArray() != $scheduleDay->toArray()) {
+                dump("$date was changed!");
+                $day->body = $scheduleDay;
+            }
+
+            $day->touch();
+            $day->save();
+        }
     }
 }

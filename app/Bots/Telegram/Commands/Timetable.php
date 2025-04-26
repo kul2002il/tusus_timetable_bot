@@ -64,14 +64,14 @@ class Timetable extends Logic\AbstractCommand implements Publicable, ButtonCallb
     private function createKeyboardMarkup(Carbon $selectedDay): InlineKeyboardMarkup
     {
         $currentWeekIterator = Carbon::now()->startOfWeek();
-        $previousWeekIterator = $currentWeekIterator->clone()->subWeek();
+        $nextWeekIterator = $currentWeekIterator->clone()->addWeek();
 
         $buttons = [];
 
         foreach (['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'] as $dayNumber => $dayName) {
             $buttons[$dayNumber] = [];
 
-            foreach ([$previousWeekIterator, $currentWeekIterator] as $dayOfWeek) {
+            foreach ([$currentWeekIterator, $nextWeekIterator] as $dayOfWeek) {
                 $name = "$dayName {$dayOfWeek->format('d')}";
 
                 if ($selectedDay->isSameDay($dayOfWeek)) {

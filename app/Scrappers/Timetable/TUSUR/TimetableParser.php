@@ -11,17 +11,17 @@ use PHPHtmlParser\Dom;
 
 class TimetableParser implements ScheduleSourceInterface
 {
-    public function __construct(private string $source)
+    private Dom $dom;
+
+    public function __construct(string $source)
     {
+        $this->dom = new Dom();
+        $this->dom->loadStr($source);
     }
 
     private function parseToLessons(): array
     {
-        $dom = new Dom();
-
-        $dom->loadStr($this->source);
-
-        $elements = $dom->find('.screen-reader-element td');
+        $elements = $this->dom->find('.screen-reader-element td');
 
         /** @var LessonDTO[] $lessons */
         $lessons = [];
@@ -64,5 +64,10 @@ class TimetableParser implements ScheduleSourceInterface
         ksort($timetable);
 
         return collect($timetable);
+    }
+
+    public function getNextWeekLink(): string
+    {
+        return 'https://timetable.tusur.ru' . $this->dom->find('.swiper-slide.current')->nextSibling()->nextSibling()->find('a', 0)->getAttribute('href');
     }
 }

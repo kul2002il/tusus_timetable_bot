@@ -23,4 +23,13 @@ class TimetableParserTest extends TestCase
             json_encode($parsed, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
         );
     }
+
+    public function testSuccessGetLinkToNextWeek(): void
+    {
+        $source = file_get_contents(__DIR__ . '/page.html');
+
+        $link = (new TimetableParser($source))->getNextWeekLink();
+
+        $this->assertSame('https://timetable.tusur.ru/faculties/rkf/groups/234-2?week_id=758', $link);
+    }
 }
