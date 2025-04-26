@@ -3,26 +3,49 @@
 namespace App\Models\DTO;
 
 use Carbon\Carbon;
+use JsonSerializable;
 
-class LessonDTO
+class LessonDTO implements JsonSerializable
 {
-    /**
-     * @param string $discipline
-     * @param string $kind
-     * @param string $auditoriums
-     * @param string[] $teachers
-     * @param Carbon $date
-     * @param Carbon $timeStart
-     * @param Carbon $timeEnd
-     */
     public function __construct(
-        public string $discipline,
-        public string $kind,
-        public string $auditoriums,
-        public array  $teachers,
-        public Carbon $date,
-        public Carbon $timeStart,
-        public Carbon $timeEnd,
+        public readonly string $subject,
+        public readonly string $type,
+        public readonly string $auditorium,
+        public readonly string $teacher,
+        public readonly Carbon $date,
+        public readonly Carbon $startTime,
+        public readonly Carbon $endTime,
     ) {
+    }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            subject: $data['subject'],
+            type: $data['type'],
+            auditorium: $data['auditorium'],
+            teacher: $data['teacher'],
+            date: Carbon::parse($data['date']),
+            startTime: Carbon::parse($data['start_time']),
+            endTime: Carbon::parse($data['end_time']),
+        );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'subject'    => $this->subject,
+            'type'       => $this->type,
+            'auditorium' => $this->auditorium,
+            'teacher'    => $this->teacher,
+            'date'       => $this->date->toDateString(),
+            'start_time' => $this->startTime->format('H:i'),
+            'end_time'   => $this->endTime->format('H:i'),
+        ];
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

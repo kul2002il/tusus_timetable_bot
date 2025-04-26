@@ -45,8 +45,7 @@ class GetToday extends AbstractCommand implements Publicable
 
         $this->response(
             view('bot.day', [
-                'date'    => $currentDate,
-                'lessons' => json_decode($day->body),
+                'day' => $day->body,
             ])
         );
     }

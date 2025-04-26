@@ -2,17 +2,20 @@
 
 namespace App\Scrappers\Timetable\TUSUR;
 
+use App\Models\DTO\DayScheduleDTO;
 use App\Models\DTO\LessonDTO;
+use App\Scrappers\Timetable\ScheduleSourceInterface;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use PHPHtmlParser\Dom;
 
-class TimetableParser
+class TimetableParser implements ScheduleSourceInterface
 {
     public function __construct(private string $source)
     {
     }
 
-    public function parseToLessons(): array
+    private function parseToLessons(): array
     {
         $dom = new Dom();
 
@@ -31,35 +34,35 @@ class TimetableParser
             $times = explode('-', trim($element->find('.modal-body p')[2]->text()), 2);
 
             $lessons[] = new LessonDTO(
-                discipline: trim($element->find('.discipline')[1]->text()),
-                kind: trim($element->find('.kind')[0]->text(true)),
-                auditoriums: trim($element->find('.auditoriums')[0]->text(true)),
-                teachers: collect($element->find('.modal-info-teachers a'))->map(fn ($e) => $e->text(true))->all(),
+                subject: trim($element->find('.discipline')[1]->text()),
+                type: trim($element->find('.kind')[0]->text(true)),
+                auditorium: trim($element->find('.auditoriums')[0]->text(true)),
+                teacher: collect($element->find('.modal-info-teachers a'))->map(fn ($e) => $e->text(true))->implode(', '),
                 date: Carbon::parse($date),
-                timeStart: Carbon::parse("$date $times[0]"),
-                timeEnd: Carbon::parse("$date $times[1]"),
+                startTime: Carbon::parse("$date $times[0]"),
+                endTime: Carbon::parse("$date $times[1]"),
             );
         }
 
         return $lessons;
     }
 
-    public function getTimetable(): array
+    /** @inheritdoc */
+    public function getSchedule(): Collection
     {
         $timetable = [];
 
         foreach ($this->parseToLessons() as $lesson) {
             $date = $lesson->date->toDateString();
-            $time = $lesson->timeStart->format('H:i');
-            $timetable[$date] ??= [];
-            $timetable[$date][$time] = $lesson;
+            $timetable[$date] ??= new DayScheduleDTO($lesson->date->clone(), collect([]));
+            $timetable[$date]->lessons->add($lesson);
         }
 
         foreach ($timetable as $day) {
-            ksort($day);
+            $day->lessons->sortBy('startTime');
         }
         ksort($timetable);
 
-        return $timetable;
+        return collect($timetable);
     }
 }

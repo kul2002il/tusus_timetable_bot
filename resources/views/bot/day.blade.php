@@ -1,9 +1,13 @@
-Расписание на {{ $date }}:
+@php
+/** @var \App\Models\DTO\DayScheduleDTO $day */
+@endphp
 
-@foreach($lessons as $time => $lesson)
-{{$time}}
-{{$lesson->discipline}}
-{{$lesson->kind}}
-{{$lesson->auditoriums}}
+Расписание на {{ $day->date->toDateString() }}:
+
+@foreach($day->lessons as $lesson)
+{{$lesson->startTime->format('H:i')}}
+{{$lesson->subject}}
+{{$lesson->type}}
+{{$lesson->auditorium}}
 
 @endforeach

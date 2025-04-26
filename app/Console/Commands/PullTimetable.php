@@ -21,21 +21,19 @@ class PullTimetable extends Command
         $this->withProgressBar(Group::query()->whereIn('id', $ids)->get(), function ($group) {
             $source = file_get_contents("https://timetable.tusur.ru/faculties/{$group->faculty}/groups/{$group->number}");
 
-            $timetable = (new TimetableParser($source))->getTimetable();
+            $timetable = (new TimetableParser($source))->getSchedule();
 
-            foreach ($timetable as $date => $dayLessons) {
+            foreach ($timetable as $scheduleDay) {
+                $date = $scheduleDay->date->toDateString();
+                /** @var Day $day */
                 $day = Day::query()->firstOrNew([
                     'group_id' => $group->id,
                     'date'     => $date
                 ]);
 
-                $currentVersion = json_encode($dayLessons, JSON_UNESCAPED_UNICODE);
-
-                if ($day->body !== $currentVersion) {
+                if ($day->body->toArray() != $scheduleDay->toArray()) {
                     dump("$date was changed!");
-                    dump($day->body);
-                    dump($currentVersion);
-                    $day->body = $currentVersion;
+                    $day->body = $scheduleDay;
                 }
 
                 $day->touch();

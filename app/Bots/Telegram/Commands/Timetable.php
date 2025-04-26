@@ -38,8 +38,7 @@ class Timetable extends Logic\AbstractCommand implements Publicable, ButtonCallb
         $day = app(GetDayByUserAndDateAction::class)->run($this->getChatId(), $date);
 
         $newMessage = trim(view('bot.day', [
-            'date'    => $date->toDateString(),
-            'lessons' => json_decode($day->body),
+            'day' => $day->body,
         ]));
 
         if ($newMessage === $this->update->callbackQuery?->message?->text) {
