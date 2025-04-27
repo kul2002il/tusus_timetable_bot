@@ -9,7 +9,7 @@ class Kernel extends ConsoleKernel
 {
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('timetable:pull')->everyFifteenMinutes();
+        $schedule->command('timetable:pull')->everyThirtyMinutes();
     }
 
     protected function commands(): void
