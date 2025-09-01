@@ -31,10 +31,11 @@ class PullGroups extends Command
 
             foreach ($groupsLinks as $groupLink) {
                 $group = str_replace("/faculties/$faculty/groups/", '', $groupLink->getAttribute('href'));
-                Group::query()->firstOrCreate([
-                    'faculty' => $faculty,
-                    'number'  => $group,
+                $record = Group::query()->firstOrNew([
+                    'number' => $group,
                 ]);
+                $record->faculty = $faculty;
+                $record->save();
             }
         });
     }
