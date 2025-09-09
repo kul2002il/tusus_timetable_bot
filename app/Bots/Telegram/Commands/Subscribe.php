@@ -29,7 +29,7 @@ class Subscribe extends AbstractCommand implements Publicable
 
     private function init(): void
     {
-        $this->response('Введите номер группы');
+        $this->response('Введите номер группы ответом на это сообщение.');
         $this->setPipelineState(self::INPUT_GROUP_STAGE);
     }
 
@@ -50,7 +50,7 @@ class Subscribe extends AbstractCommand implements Publicable
             ['group_id' => $group->id, 'options' => '{}'],
         );
 
-        $this->response("Вы подписались на группу $group->number, $group->faculty. Можно попробовать запросить расписание командой /today.");
+        $this->response("Вы подписались на группу $group->number, $group->faculty. Можно попробовать запросить расписание командой /timetable.");
         $this->endPipeline();
     }
 }

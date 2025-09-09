@@ -70,7 +70,13 @@ class UpdateRunner
         foreach ($this->update->message->entities ?? [] as $entity) {
             if ($entity instanceof MessageEntity && $entity->type === 'bot_command') {
                 $commandName = substr($this->update->message->text, $entity->offset, $entity->length);
-                $this->createCommandByName($commandName)->run();
+                $commandName = explode('@', $commandName);
+
+                if (($commandName[1] ?? false) && ($commandName[1] != config('telegram.bot_username'))) {
+                    return true; // Just ignore.
+                }
+
+                $this->createCommandByName($commandName[0])->run();
 
                 return true;
             }
